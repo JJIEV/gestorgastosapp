@@ -1,17 +1,51 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { useNavigation, useFocusEffect  } from '@react-navigation/native';
 import LogoImage from '../assets/pngwing.com (2).png';
 
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [userCreated, setUserCreated] = useState(false); 
 
   const navigation = useNavigation();
 
-  const handleRegister = () => {
-    console.log('Registro con:', email, password);
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
+
+  const handleRegister = () => {
+    if (!isValidEmail(email.trim())) {
+      Alert.alert('Error', 'Por favor, introduce un correo electrónico válido.');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    setUserCreated(true);
+
+    setTimeout(() => {
+      setUserCreated(false);
+    }, 5000);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      navigation.setOptions({
+        headerShown: true,
+        title: "Register", 
+        headerStyle: {
+          backgroundColor: "#007bff", 
+        },
+        headerTintColor: "#fff", 
+      });
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -35,6 +69,11 @@ export default function Register() {
       <TouchableOpacity onPress={handleRegister}>
         <Text style={styles.button}>Registrarse</Text>
       </TouchableOpacity>
+
+      {/* Mostrar mensaje de usuario creado si es true */}
+      {userCreated && (
+        <Text style={styles.successMessage}>Usuario creado</Text>
+      )}
     </View>
   );
 }
@@ -74,5 +113,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
     fontSize: 16,
+  },
+  successMessage: {
+    marginTop: 10,
+    color: 'green',
+    fontWeight: 'bold',
   },
 });

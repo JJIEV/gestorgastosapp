@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native"; 
 import axios from "axios";
+import { Header } from '@react-navigation/stack';
+import NavigationBar from "./NavigationBar";
 
 export default function HomeScreen({ navigation }) {
   const [stockData, setStockData] = useState([]);
+  const [userEmail, setUserEmail] = useState("ejemplo@correo.com");
 
   const fetchStockData = async () => {
     try {
@@ -31,6 +34,8 @@ export default function HomeScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       navigation.setOptions({
+        headerShown: true,
+        title: "Home", 
         headerStyle: {
           backgroundColor: "#007bff", 
         },
@@ -49,35 +54,40 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-    <Text style={styles.header}>Stock Data</Text>
-    <View style={styles.tableContainer}>
-      <View style={styles.columnHeaders}>
-        <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Date</Text>
-        <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Price</Text>
-        <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Volume</Text>
+      <NavigationBar navigation={navigation} userEmail={userEmail} />
+      <View style={styles.contentContainer}>
+        <Text style={styles.header}>Stock Data</Text>
+        <View style={styles.tableContainer}>
+          <View style={styles.columnHeaders}>
+            <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Date</Text>
+            <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Price</Text>
+            <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Volume</Text>
+          </View>
+          <FlatList
+            data={stockData.map((entry, index) => ({
+              id: `${entry.date}-${index}`,
+              date: entry.date,
+              open: entry.open,
+              close: entry.close,
+              volume: entry.volume,
+            }))}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id} 
+          />
+        </View>
       </View>
-      <FlatList
-        data={stockData.map((entry, index) => ({
-          id: `${entry.date}-${index}`,
-          date: entry.date,
-          open: entry.open,
-          close: entry.close,
-          volume: entry.volume,
-        }))}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id} 
-      />
     </View>
-  </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#f0f0f0",
+  },
+  contentContainer: {
+    flex: 1,
+    marginTop: 50, 
     paddingHorizontal: 20,
     paddingTop: 20,
   },
@@ -98,10 +108,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff", 
   },
   tableContainer: {
-    borderWidth: 1, // Añade un borde alrededor de la tabla
-    borderColor: "#ccc", // Color del borde
-    borderRadius: 5, // Añade esquinas redondeadas al borde
-    overflow: "hidden", // Evita que los bordes redondeados se solapen con los elementos dentro de la tabla
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    overflow: "hidden",
   },
   columnHeader: {
     fontSize: 18,
@@ -127,3 +137,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+

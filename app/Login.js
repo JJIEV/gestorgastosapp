@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
 import LogoImage from '../assets/pngwing.com (2).png';
 
 export default function Login() {
@@ -10,22 +10,24 @@ export default function Login() {
   const navigation = useNavigation();
 
   const handleLogin = () => {
+    const trimmedEmail = email.trim(); 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+  
+    if (!emailRegex.test(trimmedEmail)) {
       Alert.alert('Correo Electrónico Inválido', 'Por favor ingrese un correo electrónico válido.');
       return;
     }
-
+  
     if (password.length < 6) {
       Alert.alert('Contraseña Inválida', 'La contraseña debe tener al menos 6 caracteres.');
       return;
     }
-
+  
     navigation.navigate('Home');
-
+  
     setEmail('');
     setPassword('');
-  };
+  };  
 
   const handleRegister = () => {
     navigation.navigate('Register');
