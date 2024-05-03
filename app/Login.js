@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import LogoImage from '../assets/pngwing.com (2).png'; 
+import LogoImage from '../assets/pngwing.com (2).png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -27,6 +27,10 @@ export default function Login() {
     setPassword('');
   };
 
+  const handleRegister = () => {
+    navigation.navigate('Register');
+  };
+
   return (
     <View style={styles.container}>
       <Image source={LogoImage} style={styles.logo} />
@@ -48,7 +52,12 @@ export default function Login() {
           secureTextEntry
         />
       </View>
-      <Button title="Iniciar Sesión" onPress={handleLogin} />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Iniciar Sesión</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleRegister}>
+        <Text style={[styles.linkText, styles.registerText]}>Registrarse</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -83,5 +92,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: '100%',
     borderRadius: 5,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  linkText: {
+    color: '#007bff',
+    fontSize: 16,
+  },
+  registerText: {
+    marginTop: 10,
   },
 });

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
+import { useFocusEffect } from "@react-navigation/native"; 
 import axios from "axios";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [stockData, setStockData] = useState([]);
 
   const fetchStockData = async () => {
@@ -13,7 +14,6 @@ export default function HomeScreen() {
 
       if (response.status === 200) {
         const stockData = response.data;
-        console.log("Datos de acciones:", stockData);
         setStockData(stockData);
       } else {
         throw new Error("Error al obtener los datos de acciones");
@@ -27,6 +27,18 @@ export default function HomeScreen() {
     fetchStockData();
   }, []);
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      navigation.setOptions({
+        headerStyle: {
+          backgroundColor: "#007bff", 
+        },
+        headerTintColor: "#fff", 
+      });
+    }, [])
+  );
+
   const renderItem = ({ item }) => (
     <View style={styles.row}>
       <Text style={styles.date}>{item.date}</Text>
@@ -37,11 +49,12 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Stock Data</Text>
+    <Text style={styles.header}>Stock Data</Text>
+    <View style={styles.tableContainer}>
       <View style={styles.columnHeaders}>
-        <Text style={styles.columnHeader}>Date</Text>
-        <Text style={styles.columnHeader}>Price</Text>
-        <Text style={styles.columnHeader}>Volume</Text>
+        <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Date</Text>
+        <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Price</Text>
+        <Text style={[styles.columnHeader, { backgroundColor: "#007bff", color: "#fff" }]}>Volume</Text>
       </View>
       <FlatList
         data={stockData.map((entry, index) => ({
@@ -55,7 +68,8 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id} 
       />
     </View>
-  );
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -81,11 +95,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     width: "100%",
+    backgroundColor: "#007bff", 
+  },
+  tableContainer: {
+    borderWidth: 1, // Añade un borde alrededor de la tabla
+    borderColor: "#ccc", // Color del borde
+    borderRadius: 5, // Añade esquinas redondeadas al borde
+    overflow: "hidden", // Evita que los bordes redondeados se solapen con los elementos dentro de la tabla
   },
   columnHeader: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#555",
+    color: "#fff",
+    paddingHorizontal: 10, 
   },
   row: {
     flexDirection: "row",
@@ -103,6 +125,5 @@ const styles = StyleSheet.create({
   },
   data: {
     fontSize: 16,
-    color: "#007bff",
   },
 });
